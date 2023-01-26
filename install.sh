@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ansible=$(command -v ansible)
-if [ $ansible ]
+if [ "$ansible" ]
 then
     echo "ERROR! Ansible is already installed."
     exit 1
@@ -22,22 +22,22 @@ fi
 
 function install_package {
     while true; do
-        read -p "Do you wish to install $1? (y/n) " yn
+        read -r -p "Do you wish to install $1? (y/n) " yn
         case $yn in
-            [Yy]* ) sudo $package_manager -y install $1; break;;
+            [Yy]* ) /usr/bin/sudo "$package_manager" -y install "$1"; break;;
             [Nn]* ) exit 1;;
             * ) echo "Please answer y(es) or n(o).";;
         esac
     done
 }
 
-if ! [ $(command -v python3) ]
+if ! [ "$(command -v python3)" ]
 then
     echo "ERROR! Python 3 is not found."
     install_package python3
 fi
 
-if ! [ $(command -v pip3) ]
+if ! [ "$(command -v pip3)" ]
 then
     echo "ERROR! Python 3 package manager (PIP) is not found."
     install_package python3-pip
@@ -46,4 +46,3 @@ fi
 python3 -m pip install --upgrade pip
 python3 -m pip install --user ansible
 python3 -m pip install --user ansible-pylibssh
-
