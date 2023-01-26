@@ -7,16 +7,16 @@ then
     exit 1
 fi
 
-dnf=$(command -v dnf)
+yum=$(command -v yum)
 apt=$(command -v apt)
 if [ "$dnf" ]
 then
-    package_manager=$dnf
+    package_manager=$yum
 elif [ "$apt" ]
 then
     package_manager=$apt
 else
-    echo "ERROR! Unsupported Linux distribution (must be Debian or Red Hat)."
+    echo "ERROR! Unsupported Linux distribution (must be Ubuntu or Red Hat)."
     exit 1
 fi
 
