@@ -43,6 +43,6 @@ then
     install_package python3-pip
 fi
 
-python3 -m pip install --upgrade pip
+python3 -m pip install --user --upgrade pip
 python3 -m pip install --user ansible
 python3 -m pip install --user ansible-pylibssh
