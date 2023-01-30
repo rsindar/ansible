@@ -2,11 +2,16 @@
 
 import os
 import sys
+import subprocess
 import argparse
 import json
-import requests
-from requests.exceptions import HTTPError
-import urllib3
+try:
+    import requests
+except ModuleNotFoundError:
+    if 'VIRTUAL_ENV' in os.environ:
+        subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'requests'])
+    else:
+        subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--user', 'requests'])
 
 inventory = {'_meta': {'hostvars': {}}, 'all': {'children': ['ungrouped']}, 'ungrouped': {'hosts': []}}
 cmdb_url = 'https://directus.tld.local/items/host?fields=hostname&fields=network_interface&fields=operating_system&fields=ansible_groups&fields=environment&fields=location&limit=-1&filter=%7B%22state%22%3A%22online%22%7D'
@@ -38,7 +43,6 @@ def extract_ip_address(network_interfaces):
 
 def fulfill_inventory():
     try:
-        urllib3.disable_warnings()
         response = requests.get(cmdb_url, headers=set_cmdb_headers())
         response.raise_for_status()
         json_response = response.json()
@@ -63,8 +67,9 @@ def fulfill_inventory():
                             or str(host['operating_system']).find('Red Hat') >= 0 \
                             or str(host['operating_system']).find('Ubuntu') >= 0:
                         add_host_to_group('linux', host['hostname'])
-    except HTTPError as http_err:
-        print(f'HTTP error occurred: {http_err}')
+    except Exception as err:
+        print(f'Error fulfilling the inventory: {err}')
+        sys.exit(1)
 
 
 def parse_args():
