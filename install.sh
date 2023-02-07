@@ -9,7 +9,7 @@ fi
 
 yum=$(command -v yum)
 apt=$(command -v apt)
-if [ "$dnf" ]
+if [ "$yum" ]
 then
     package_manager=$yum
 elif [ "$apt" ]
