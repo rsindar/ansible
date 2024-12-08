@@ -1,7 +1,7 @@
-Role Name
-=========
+Description
+-----------
 
-docker
+Deploy Docker using ansible.
 
 Requirements
 ------------

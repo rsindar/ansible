@@ -1,7 +1,7 @@
-Role Name
-=========
+Description
+-----------
 
-fail2ban
+Deploy fail2ban using ansible.
 
 Requirements
 ------------
