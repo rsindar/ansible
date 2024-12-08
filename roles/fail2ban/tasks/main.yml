@@ -1,0 +1,20 @@
+---
+- name: "Install fail2ban package"
+  ansible.builtin.package:
+    name: fail2ban
+    state: present
+
+- name: "Copy SSHD jail configuration"
+  ansible.builtin.template:
+    src: sshd.conf.j2
+    dest: /etc/fail2ban/jail.d/sshd.conf
+    mode: "0644"
+    owner: root
+    group: root
+  notify: Restart fail2ban
+
+- name: "Start fail2ban service"
+  ansible.builtin.systemd:
+    name: fail2ban
+    state: started
+    enabled: true
