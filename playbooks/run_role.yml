@@ -1,0 +1,7 @@
+---
+- name: Playbook runs the ansible role specified in the parameter
+  hosts: all
+  become: true
+  gather_facts: true
+  roles:
+    - "{{ role_name }}"
