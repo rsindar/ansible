@@ -1,0 +1,67 @@
+---
+- name: "Create node_exporter user"
+  ansible.builtin.user:
+    name: node_exporter
+    shell: /sbin/nologin
+    create_home: false
+    state: present
+
+- name: "Create /var/lib/node_exporter/textfile_collector folder"
+  ansible.builtin.file:
+    path: /var/lib/node_exporter/textfile_collector
+    mode: "0750"
+    owner: node_exporter
+    group: node_exporter
+    state: directory
+
+- name: "Download node_exporter binary"
+  ansible.builtin.unarchive:
+    src: "{{ node_exporter_url }}"
+    dest: /tmp/
+    mode: "0750"
+    owner: node_exporter
+    group: node_exporter
+    remote_src: true
+    exclude:
+      - LICENSE
+      - NOTICE
+  notify: Restart node_exporter
+
+- name: "Copy node_exporter to /usr/sbin/"
+  ansible.builtin.copy:
+    src: /tmp/node_exporter-{{ node_exporter_version }}.linux-amd64/node_exporter
+    dest: /usr/sbin/node_exporter
+    mode: "0750"
+    owner: node_exporter
+    group: node_exporter
+    remote_src: true
+  notify: Restart node_exporter
+
+- name: "Copy systemd unit files"
+  ansible.builtin.template:
+    src: etc/systemd/system/{{ item }}.j2
+    dest: /etc/systemd/system/{{ item }}
+    mode: "0640"
+    owner: root
+    group: root
+  loop:
+    - node_exporter.service
+    - node_exporter.socket
+  notify:
+    - Reload systemd
+    - Restart node_exporter
+
+- name: "Copy /etc/sysconfig/node_exporter"
+  ansible.builtin.template:
+    src: etc/sysconfig/node_exporter.j2
+    dest: /etc/sysconfig/node_exporter
+    mode: "0640"
+    owner: root
+    group: root
+  notify: Restart node_exporter
+
+- name: "Enable and start node_exporter service"
+  ansible.builtin.systemd:
+    name: node_exporter
+    enabled: true
+    state: started

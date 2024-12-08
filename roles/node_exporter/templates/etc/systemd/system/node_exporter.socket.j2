@@ -1,0 +1,9 @@
+{{ ansible_managed | comment }}
+[Unit]
+Description=Node Exporter
+
+[Socket]
+ListenStream=9100
+
+[Install]
+WantedBy=sockets.target
