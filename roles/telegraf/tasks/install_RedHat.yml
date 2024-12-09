@@ -1,0 +1,20 @@
+---
+- name: "Create influxdata repository"
+  ansible.builtin.yum_repository:
+    name: "influxdata"
+    description: "InfluxData Repository - Stable"
+    baseurl: "https://repos.influxdata.com/stable/x86_64/main"
+    gpgkey: "https://repos.influxdata.com/influxdata-archive_compat.key"
+    gpgcheck: true
+    enabled: true
+    file: "influxdata"
+    state: present
+
+- name: "Install telegraf"
+  ansible.builtin.yum:
+    name: telegraf
+    state: present
+
+- name: "Set group name"
+  ansible.builtin.set_fact:
+    telegraf_group: "telegraf"

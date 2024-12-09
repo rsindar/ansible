@@ -1,0 +1,26 @@
+---
+- name: "Install required packages"
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - gnupg
+    state: present
+
+- name: "Add Telegraf GPG key"
+  ansible.builtin.apt_key:
+    url: "https://repos.influxdata.com/influxdata-archive.key"
+    state: present
+
+- name: "Add Telegraf repo"
+  ansible.builtin.apt_repository:
+    repo: deb [arh=amd64] https://repos.influxdata.com/debian stable main'
+    state: present
+    filename: influxdata
+
+- name: "Install telegraf"
+  ansible.builtin.apt:
+    name: telegraf
+
+- name: "Set group name"
+  ansible.builtin.set_fact:
+    telegraf_group: "_telegraf"

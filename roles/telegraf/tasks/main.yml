@@ -1,19 +1,11 @@
 ---
-- name: "Create influxdata repository"
-  ansible.builtin.yum_repository:
-    name: "influxdata"
-    description: "InfluxData Repository - Stable"
-    baseurl: "https://repos.influxdata.com/stable/x86_64/main"
-    gpgkey: "https://repos.influxdata.com/influxdata-archive_compat.key"
-    gpgcheck: true
-    enabled: true
-    file: "influxdata"
-    state: present
+- name: "Gather facts"
+  ansible.builtin.setup:
+    gather_subset: 'min'
+  when: ansible_os_family is not defined
 
 - name: "Install telegraf"
-  ansible.builtin.yum:
-    name: telegraf
-    state: present
+  include_tasks: install_{{ ansible_os_family }}.yml
 
 - name: "Copy /etc/telegraf/telegraf.conf"
   ansible.builtin.template:
@@ -21,7 +13,7 @@
     dest: /etc/telegraf/telegraf.conf
     mode: "0640"
     owner: root
-    group: telegraf
+    group: "{{ telegraf_group }}"
   notify: "Restart telegraf"
 
 - name: "Start telegraf service"
