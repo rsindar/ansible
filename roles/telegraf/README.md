@@ -8,7 +8,7 @@ NB! Please review the original guide before using this role - https://docs.influ
 Requirements
 ------------
 
-Red Hat Linux distribution.
+Red Hat or Ubuntu Linux distribution.
 
 Role Variables
 --------------
